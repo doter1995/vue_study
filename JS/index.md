@@ -16,3 +16,8 @@ a.log = function(){
 }
 a.log("A text")
 ```
+### 生成一个纯净的对象
+```javascript
+Object.create(null)
+```
+![对比图](./image/objectPropperties.png)
