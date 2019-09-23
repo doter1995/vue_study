@@ -13,5 +13,6 @@
 [build指令分析](./VueBuild/index.md)
 
 ### VUE源码分析
+[Vue源码分析](./Vue/index.md)
 
 ### VUE渲染器分析

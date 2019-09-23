@@ -34,6 +34,7 @@ export function initMixin (Vue: Class<Component>) {
       // 处理内部组件，需要特殊处理
       initInternalComponent (vm, options);
     } else {
+      // 将继承的options，以及extends，mixins的option及配置options进行合并。
       vm.$options = mergeOptions (
         resolveConstructorOptions (vm.constructor),
         options || {},
@@ -99,34 +100,41 @@ export function initInternalComponent (
     opts.staticRenderFns = options.staticRenderFns;
   }
 }
-
+// 处理组件及其继承的组件的options合并
+// 理解为取出merge过其继承组件的options
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options;
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions (Ctor.super);
     const cachedSuperOptions = Ctor.superOptions;
     if (superOptions !== cachedSuperOptions) {
-      // super option changed,
-      // need to resolve new options.
+      // super option发生过变化,
+      // 则需要处理新的options.
       Ctor.superOptions = superOptions;
-      // check if there are any late-modified/attached options (#4976)
+      // 此处获取Ctor修改过的opetions
       const modifiedOptions = resolveModifiedOptions (Ctor);
-      // update base extend options
+      // 将修改过的属性加入到extendOptions
       if (modifiedOptions) {
         extend (Ctor.extendOptions, modifiedOptions);
       }
+      // 合并superOptions和Ctor.extendOptions，并赋值给options
       options = Ctor.options = mergeOptions (superOptions, Ctor.extendOptions);
+      //如果options的name存在
       if (options.name) {
+        //为options中components添加自身组件
         options.components[options.name] = Ctor;
       }
     }
   }
   return options;
 }
-
+// 取出修改过的options，新生成对象
 function resolveModifiedOptions (Ctor: Class<Component>): ?Object {
   let modified;
   const latest = Ctor.options;
+  // sealed 密封
+  // sealedOptions即密封的option。是不可扩展的。
+  // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/seal
   const sealed = Ctor.sealedOptions;
   for (const key in latest) {
     if (latest[key] !== sealed[key]) {
