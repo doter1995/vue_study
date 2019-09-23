@@ -26,3 +26,10 @@ a = {a:1,b:{b:1}}
 Object.create(a)
 ```
 ![Object创建图](./image/objectCreate.png)
+
+### Object.seal 创建密封对象
+
+密封对象：即不可增删属性的对象
+
+[Object.seal](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/seal)
+// ToDo：待补充
