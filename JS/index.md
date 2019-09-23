@@ -21,3 +21,8 @@ a.log("A text")
 Object.create(null)
 ```
 ![对比图](./image/objectPropperties.png)
+```javascript
+a = {a:1,b:{b:1}}
+Object.create(a)
+```
+![Object创建图](./image/objectCreate.png)
