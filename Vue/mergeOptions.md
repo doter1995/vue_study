@@ -114,4 +114,20 @@ ps: 由于以上递归过多，可以简单理解为：通过递归获取继承�
 
 #### 1.2.2 mergeOptions
 [options.js](/VueCore/core/util/options.js)
-// ToDo:未完待续
+合并两个options，即parent,child
+
+1. 将child的props统一处理为Object形式
+2. 将child的inject统一处理为Object形式
+3. 将child的directives统一处理为object形式
+
+4. 如果child._base不为true
+5. 将child中配置的extends中的options merge到parent中。
+6. 将child中配置的mixins中的options merge到parent中。
+
+7. 遍历parent属性与child合并到`新的options`。
+8. 遍历chuild属性独有属性，parent与child合并`options`。
+这样合并出来的是新的对象。
+
+##### 1.2.2.1 关于属性合并规则
+// ToDo：未完待续
+参考[options.js](VueCore/core/util/options.js)

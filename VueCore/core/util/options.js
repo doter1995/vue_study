@@ -196,7 +196,8 @@ ASSET_TYPES.forEach (function (type) {
 
 /**
  * Watchers.
- *
+ * watch属性的合并方式
+ * 
  * Watchers hashes should not overwrite one
  * another, so we merge them as arrays.
  */
@@ -231,7 +232,7 @@ strats.watch = function (
 };
 
 /**
- * Other object hashes.
+ * props，methods，inject，computed的合并方式
  */
 strats.props = strats.methods = strats.inject = strats.computed = function (
   parentVal: ?Object,
@@ -248,10 +249,14 @@ strats.props = strats.methods = strats.inject = strats.computed = function (
   if (childVal) extend (ret, childVal);
   return ret;
 };
+/**
+ * provide的合并方式
+ * 使用mergeDataOrFn
+ */
 strats.provide = mergeDataOrFn;
 
 /**
- * Default strategy.
+ * 默认的通用属性合并.
  */
 const defaultStrat = function (parentVal: any, childVal: any): any {
   return childVal === undefined ? parentVal : childVal;
@@ -425,7 +430,7 @@ export function mergeOptions (
   for (key in parent) {
     mergeField (key);
   }
-  //遍历parent的属性
+  //遍历child的属性
   for (key in child) {
     if (!hasOwn (parent, key)) {
       mergeField (key);
