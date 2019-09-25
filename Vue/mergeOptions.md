@@ -129,5 +129,175 @@ ps: 由于以上递归过多，可以简单理解为：通过递归获取继承�
 这样合并出来的是新的对象。
 
 ##### 1.2.2.1 关于属性合并规则
-// ToDo：未完待续
+1. props,methods,inject,computed的处理思路:
+判断parentVal不存在，直接返回childVal
+否则copy一份parentVal。
+然后将childVal的属性merge进去。
+```javascript
+strats.props =
+strats.methods =
+strats.inject =
+strats.computed = function (
+  parentVal: ?Object,
+  childVal: ?Object,
+  vm?: Component,
+  key: string
+): ?Object {
+  if (childVal && process.env.NODE_ENV !== 'production') {
+    assertObjectType(key, childVal, vm)
+  }
+  if (!parentVal) return childVal
+  const ret = Object.create(null)
+  extend(ret, parentVal)
+  if (childVal) extend(ret, childVal)
+  return ret
+}
+```
+2. watch 由于parent和child可能同时监听一个，所以需要将监听函数合并为数组
+```javascript
+strats.watch = function (
+  parentVal: ?Object,
+  childVal: ?Object,
+  vm?: Component,
+  key: string
+): ?Object {
+  // work around Firefox's Object.prototype.watch...
+  if (parentVal === nativeWatch) parentVal = undefined
+  if (childVal === nativeWatch) childVal = undefined
+  /* istanbul ignore if */
+  if (!childVal) return Object.create(parentVal || null)
+  if (process.env.NODE_ENV !== 'production') {
+    assertObjectType(key, childVal, vm)
+  }
+  if (!parentVal) return childVal
+  const ret = {}
+  extend(ret, parentVal)
+  for (const key in childVal) {
+    let parent = ret[key]
+    const child = childVal[key]
+    if (parent && !Array.isArray(parent)) {
+      parent = [parent]
+    }
+    // ret[key]进行数组合并，或转为数组
+    ret[key] = parent
+      ? parent.concat(child)
+      : Array.isArray(child) ? child : [child]
+  }
+  return ret
+}
+```
+3. data合并，会将data方法执行，并对其方法返回值进行`深merge`
+```javascript
+strats.data = function (
+  parentVal: any,
+  childVal: any,
+  vm?: Component
+): ?Function {
+  if (!vm) {
+    if (childVal && typeof childVal !== 'function') {
+      //此处移除源码警告信息
+      return parentVal
+    }
+    return mergeDataOrFn(parentVal, childVal)
+  }
+  return mergeDataOrFn(parentVal, childVal, vm)
+}
+```
+4. provide 的合并mergeDataOrFn
+ 
+ mergeDataOrFn时，会判断parentVal，和childVal是否为function，
+ 如果是function则取到该方法返回值进行`mergeData`。
+
+5. mergeData 会对其进行`深merge`,注意其实是返回一个方法，这个方法会进行`深merge`，两个data的返回值。
+```javascript
+function mergeData (to: Object, from: ?Object): Object {
+  if (!from) return to
+  let key, toVal, fromVal
+
+  const keys = hasSymbol
+    ? Reflect.ownKeys(from)
+    : Object.keys(from)
+
+  for (let i = 0; i < keys.length; i++) {
+    key = keys[i]
+    // in case the object is already observed...
+    if (key === '__ob__') continue
+    toVal = to[key]
+    fromVal = from[key]
+    if (!hasOwn(to, key)) {
+      set(to, key, fromVal)
+    } else if (
+      toVal !== fromVal &&
+      isPlainObject(toVal) &&
+      isPlainObject(fromVal)
+    ) {
+      //判断其属性值为Object，则进行深merge
+      mergeData(toVal, fromVal)
+    }
+  }
+  return to
+}
+```
+6. LIFECYCLE_HOOKS的合并
+```javascript
+export const LIFECYCLE_HOOKS = [
+  'beforeCreate',
+  'created',
+  'beforeMount',
+  'mounted',
+  'beforeUpdate',
+  'updated',
+  'beforeDestroy',
+  'destroyed',
+  'activated',
+  'deactivated',
+  'errorCaptured',
+  'serverPrefetch'
+]
+//都会使用`mergeHook`来合并
+function mergeHook (
+  parentVal: ?Array<Function>,
+  childVal: ?Function | ?Array<Function>
+): ?Array<Function> {
+  // 将parentVal和childVal数组惊醒合并。
+  const res = childVal
+    ? parentVal
+      ? parentVal.concat(childVal)
+      : Array.isArray(childVal)
+        ? childVal
+        : [childVal]
+    : parentVal
+  return res
+    ? dedupeHooks(res) //会进行去重
+    : res
+}
+```
+9. ASSET_TYPES 合并
+```javascript
+export const ASSET_TYPES = [
+  'component',
+  'directive',
+  'filter'
+]
+function mergeAssets (
+  parentVal: ?Object,
+  childVal: ?Object,
+  vm?: Component,
+  key: string
+): Object {
+  const res = Object.create(parentVal || null)
+  if (childVal) {
+    // 浅merge
+    return extend(res, childVal)
+  } else {
+    return res
+  }
+}
+```
+
+好了mergeOption就完了，简单理解就是：
+
+对与data和provide。合并出一个function，这个函数返回的是两个function的返回值的merge结果。并且merge结果时使用的是递归`深merge`
+对于其他的进行`浅merge`，部分需要数组的需要对方法进行merge
+
 参考[options.js](VueCore/core/util/options.js)
