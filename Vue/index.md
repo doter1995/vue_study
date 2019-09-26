@@ -12,11 +12,11 @@
 
 [参考注解源码](/VueCore/core/instance/init.js)
 1. [合并option](/Vue/mergeOptions.md)
-2. [初始化生命周期](Vue/initLifecycle.md)
+2. [初始化生命周期](/Vue/initLifecycle.md)
 `initLifecycle(vm)`
-3. [初始化事件](Vue/initEvents.md)
+3. [初始化事件](/Vue/initEvents.md)
 `initEvents(vm)`
-4. 初始化render
+4. [初始化render](/Vue/initRender.md)
 `initRender(vm)`
 5. 调用beforeCreate
 `callHook(vm, 'beforeCreate')`
