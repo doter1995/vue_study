@@ -11,22 +11,10 @@
 在`src/core/instance/index.js`会调用在`_init`方法进行实例化
 
 [参考注解源码](/VueCore/core/instance/init.js)
-1. merge option
-```javascript
-if (options && options._isComponent) {
-    // 处理内部组件，需要特殊处理
-    initInternalComponent(vm, options)
-} else {
-    vm.$options = mergeOptions(
-    resolveConstructorOptions(vm.constructor),
-    options || {},
-    vm
-    )
-}
-```
-2. 初始化生命周期
+1. [合并option](/Vue/mergeOptions.md)
+2. [初始化生命周期](Vue/initLifecycle.md)
 `initLifecycle(vm)`
-3. 初始化事件
+3. [初始化事件](Vue/initEvents.md)
 `initEvents(vm)`
 4. 初始化render
 `initRender(vm)`
