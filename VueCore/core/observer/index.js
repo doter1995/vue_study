@@ -83,8 +83,7 @@ export class Observer {
 // helpers
 
 /**
- * Augment a target Object or Array by intercepting
- * the prototype chain using __proto__
+ * 更新target的原型链__proto__为src
  */
 function protoAugment (target, src: Object) {
   /* eslint-disable no-proto */
@@ -157,7 +156,7 @@ export function defineReactive (
   }
 
   let childOb = !shallow && observe (val);
-
+  // 重新定义defineProperty
   Object.defineProperty (obj, key, {
     enumerable: true,
     configurable: true,
