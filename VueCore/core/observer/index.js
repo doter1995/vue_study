@@ -34,7 +34,7 @@ export function toggleObserving (value: boolean) {
  * object's property keys into getter/setters that
  * collect dependencies and dispatch updates.
  */
-// 观察value，其订阅者是在dep中定义
+// 监听value，
 // 核心思想是监听该value
 export class Observer {
   value: any;
@@ -43,6 +43,7 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value;
+    //初始化dep();
     this.dep = new Dep ();
     this.vmCount = 0;
     def (value, '__ob__', this);
@@ -108,11 +109,17 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
+/**
+ * 
+ * 
+ */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 对非Object或为VNode的实例忽略
   if (!isObject (value) || value instanceof VNode) {
     return;
   }
   let ob: Observer | void;
+
   if (hasOwn (value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__;
   } else if (
@@ -162,6 +169,9 @@ export function defineReactive (
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call (obj) : val;
+      // 此处Dep.target在哪里赋值呢？
+      // Dep.target只有在初始化watch和render的时候赋值。
+      // render的时候需要取值，这样就将dep和traget进行关联起来了。
       if (Dep.target) {
         dep.depend ();
         if (childOb) {
@@ -191,6 +201,7 @@ export function defineReactive (
         val = newVal;
       }
       childOb = !shallow && observe (newVal);
+      // 此处将会通知Dep()
       dep.notify ();
     },
   });

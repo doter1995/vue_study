@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./vue.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+<script>
+    window.d = 1
+    window.app = new Vue({
+        el: "#app",
+        data() {
+            return {
+                a: 1,
+                b: 2,
+                c: 3,
+            }
+        },
+        computed: {
+            e() {
+                return this.a + 4;
+            }
+        },
+        watch: {
+            a(newVal) {
+                this.c = newVal + 5;
+            }
+        },
+        template: "<div>{{a}}<br/>{{b}}</div>"
+    })
+</script>
+
+</html>
