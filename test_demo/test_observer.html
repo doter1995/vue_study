@@ -13,14 +13,18 @@
     <div id="app"></div>
 </body>
 <script>
-    window.d = 1
+    window.test = 1
     window.app = new Vue({
         el: "#app",
         data() {
             return {
+                self: window,
                 a: 1,
                 b: 2,
                 c: 3,
+                testData: {
+                    testA: "a"
+                }
             }
         },
         computed: {
@@ -33,7 +37,7 @@
                 this.c = newVal + 5;
             }
         },
-        template: "<div>{{a}}<br/>{{b}}</div>"
+        template: "<div>{{a}}<br/>{{b}}<br/>{{self.test}}{{testData.testA}}</div>"
     })
 </script>
 
