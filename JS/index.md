@@ -32,4 +32,12 @@ Object.create(a)
 密封对象：即不可增删属性的对象
 
 [Object.seal](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/seal)
-// ToDo：待补充
+
+### Set和WeakSet,Map与WeakMap
+
+[WeakSet和WeakMap](http://es6.ruanyifeng.com/#docs/set-map#WeakSet)
+
+### proxy
+
+[Proxy](https://www.jianshu.com/p/4a5eca0536c3)
+

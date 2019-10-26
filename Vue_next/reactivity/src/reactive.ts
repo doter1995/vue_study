@@ -35,6 +35,11 @@ const isObservableType = /*#__PURE__*/ makeMap(
 )
 
 const canObserve = (value: any): boolean => {
+  // 判断该对象是否可以监听
+  // 1.非Vue对象
+  // 2.非VNode对象
+  // 3.可以监听的对象类型
+  // 4.不在不需要Reactive的set里
   return (
     !value._isVue &&
     !value._isVNode &&
@@ -64,15 +69,15 @@ export function reactive(target: object) {
     mutableCollectionHandlers
   )
 }
-
+// 创建只读的监听
 export function readonly<T extends object>(
   target: T
 ): Readonly<UnwrapNestedRefs<T>> {
-  // value is a mutable observable, retrieve its original and return
-  // a readonly version.
+  //值是可变的可观察值，检索其原始值并返回只读版本
   if (reactiveToRaw.has(target)) {
     target = reactiveToRaw.get(target)
   }
+  //创建ReactiveObject对象
   return createReactiveObject(
     target,
     rawToReadonly,
@@ -81,7 +86,7 @@ export function readonly<T extends object>(
     readonlyCollectionHandlers
   )
 }
-
+//创建ReactiveObject对象
 function createReactiveObject(
   target: any,
   toProxy: WeakMap<any, any>,
@@ -108,35 +113,39 @@ function createReactiveObject(
   if (!canObserve(target)) {
     return target
   }
+  // 获取handler
   const handlers = collectionTypes.has(target.constructor)
     ? collectionHandlers
     : baseHandlers
+  // 设置代理handlers
   observed = new Proxy(target, handlers)
+  // 将target, observed绑定到toProxy和toRaw中
   toProxy.set(target, observed)
   toRaw.set(observed, target)
+  // 将target加入tragetMap
   if (!targetMap.has(target)) {
     targetMap.set(target, new Map())
   }
   return observed
 }
-
+// 判断value是否为isReactive
 export function isReactive(value: any): boolean {
   return reactiveToRaw.has(value) || readonlyToRaw.has(value)
 }
-
+// 判断是否为可读
 export function isReadonly(value: any): boolean {
   return readonlyToRaw.has(value)
 }
-
+// 获取其原始值
 export function toRaw<T>(observed: T): T {
   return reactiveToRaw.get(observed) || readonlyToRaw.get(observed) || observed
 }
-
+// 标记为只读
 export function markReadonly<T>(value: T): T {
   readonlyValues.add(value)
   return value
 }
-
+// 标记为NonReactive
 export function markNonReactive<T>(value: T): T {
   nonReactiveValues.add(value)
   return value
