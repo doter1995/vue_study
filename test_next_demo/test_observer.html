@@ -24,7 +24,7 @@
     let cAge = VueObserver.computed(() => ob.age * 2)
     VueObserver.effect(() => {
         debugger;
-        root.innerHTML = `<h1>${ob.name}---${ob.age}---${cAge.value}</h1>`
+        root.innerHTML = `<h1>${ob.name}---${ob.age}</h1>`
     })
     btn.onclick = function () {
         ob.age += 1

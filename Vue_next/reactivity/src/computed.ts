@@ -22,6 +22,7 @@ export function computed<T>(
 export function computed<T>(
   getterOrOptions: (() => T) | WritableComputedOptions<T>
 ): any {
+  //判断是否为function来确定是否为isReadonly
   const isReadonly = isFunction(getterOrOptions)
   const getter = isReadonly
     ? (getterOrOptions as (() => T))
@@ -36,7 +37,7 @@ export function computed<T>(
 
   let dirty = true
   let value: T
-
+  // 定义runner
   const runner = effect(getter, {
     lazy: true,
     // mark effect as computed so that it gets priority during trigger
@@ -54,9 +55,6 @@ export function computed<T>(
         value = runner()
         dirty = false
       }
-      // When computed effects are accessed in a parent effect, the parent
-      // should track all the dependencies the computed property has tracked.
-      // This should also apply for chained computed properties.
       trackChildRun(runner)
       return value
     },

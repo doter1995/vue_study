@@ -50,7 +50,7 @@ const canObserve = (value: any): boolean => {
 
 // only unwrap nested ref
 type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRef<T>
-
+// 将object转为响应数据
 export function reactive<T extends object>(target: T): UnwrapNestedRefs<T>
 export function reactive(target: object) {
   // if trying to observe a readonly proxy, return the readonly version.
@@ -87,9 +87,10 @@ export function readonly<T extends object>(
   )
 }
 //创建ReactiveObject对象
+// @ts-ignore
 function createReactiveObject(
   target: any,
-  toProxy: WeakMap<any, any>,
+  toProxy,
   toRaw: WeakMap<any, any>,
   baseHandlers: ProxyHandler<any>,
   collectionHandlers: ProxyHandler<any>

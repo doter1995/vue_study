@@ -13,14 +13,20 @@ const builtInSymbols = new Set(
 
 function createGetter(isReadonly: boolean) {
   return function get(target: any, key: string | symbol, receiver: any) {
+    //const res = target[key]
     const res = Reflect.get(target, key, receiver)
+
     if (isSymbol(key) && builtInSymbols.has(key)) {
       return res
     }
     if (isRef(res)) {
       return res.value
     }
+    //track：跟踪,对dep进行添加
     track(target, OperationTypes.GET, key)
+    //对res进行转化为响应式
+    // 3.0实现了延迟转化
+    // 2.0是对其key进行递归遍历同步转化的
     return isObject(res)
       ? isReadonly
         ? // need to lazy access readonly and reactive here to avoid
@@ -45,7 +51,7 @@ function set(
   }
   const hadKey = hasOwn(target, key)
   const result = Reflect.set(target, key, value, receiver)
-  // don't trigger if target is something up in the prototype chain of original
+  // 如果在原型链中则不会触发trigger
   if (target === toRaw(receiver)) {
     /* istanbul ignore else */
     if (__DEV__) {
@@ -56,6 +62,7 @@ function set(
         trigger(target, OperationTypes.SET, key, extraInfo)
       }
     } else {
+      // 发出trigger，通知更新
       if (!hadKey) {
         trigger(target, OperationTypes.ADD, key)
       } else if (value !== oldValue) {

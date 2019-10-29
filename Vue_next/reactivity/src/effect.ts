@@ -139,7 +139,9 @@ export function track(
   if (dep === void 0) {
     depsMap.set(key!, (dep = new Set()))
   }
+
   if (!dep.has(effect)) {
+    // 对effect和dep进行添加。
     dep.add(effect)
     effect.deps.push(dep)
     if (__DEV__ && effect.onTrack) {
@@ -159,6 +161,7 @@ export function trigger(
   key?: string | symbol,
   extraInfo?: any
 ) {
+  //获取到target的依赖
   const depsMap = targetMap.get(target)
   if (depsMap === void 0) {
     // never been tracked
@@ -166,6 +169,7 @@ export function trigger(
   }
   const effects = new Set<ReactiveEffect>()
   const computedRunners = new Set<ReactiveEffect>()
+  // 创建effects和computedRunners为空Set()
   if (type === OperationTypes.CLEAR) {
     // collection being cleared, trigger all effects for target
     depsMap.forEach(dep => {
