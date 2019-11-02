@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="./VueObserver.js"></script>
+    <script src="./vue.global.js"></script>
 </head>
 
 <body>
@@ -14,21 +14,15 @@
     <button id="btn">add</button>
 </body>
 <script>
-    const root = document.querySelector('#root')
-    const btn = document.querySelector('#btn')
-    const ob = VueObserver.reactive({
-        name: '张三',
-        age: 10
-    })
-
-    let cAge = VueObserver.computed(() => ob.age * 2)
-    VueObserver.effect(() => {
-        debugger;
-        root.innerHTML = `<h1>${ob.name}---${ob.age}</h1>`
-    })
-    btn.onclick = function () {
-        ob.age += 1
-    }
+    const app = Vue.createApp();
+    app.mount({
+        template: `<div><span>{{ count }}</span></div>`,
+        data() {
+            return {
+                count: 0
+            }
+        }
+    },document.querySelector("#root"))
 
 
 </script>

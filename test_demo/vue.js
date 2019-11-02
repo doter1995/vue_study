@@ -3352,6 +3352,7 @@
     normalizationType,
     alwaysNormalize
   ) {
+    debugger;
     if (Array.isArray(data) || isPrimitive(data)) {
       normalizationType = children;
       children = data;
@@ -11819,6 +11820,7 @@
     template,
     options
   ) {
+    debugger;
     var ast = parse(template.trim(), options);
     if (options.optimize !== false) {
       optimize(ast, options);
