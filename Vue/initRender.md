@@ -10,15 +10,17 @@
   const renderContext = parentVnode && parentVnode.context;
 ```
 3. 初始化插槽slots
-```javascipt
+```javascript
   vm.$slots = resolveSlots (options._renderChildren, renderContext);
   vm.$scopedSlots = emptyObject;
 ```
 4. 初始化_c和$createElement
+```javascript
   // ToDo: _c和$createElement的区别
   vm._c = (a, b, c, d) => createElement (vm, a, b, c, d, false);
   vm.$createElement = (a, b, c, d) => createElement (vm, a, b, c, d, true);
-5. 
+```
+5. 处理`attrs`和`listeners`
 ```javascript
 defineReactive (vm, '$attrs',(parentData &&  parentData.attrs) || emptyObject, null, true);
 defineReactive (vm, '$listeners', options._parentListeners || emptyObject, null, true);
