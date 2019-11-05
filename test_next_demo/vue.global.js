@@ -5130,6 +5130,7 @@ var Vue = (function (exports) {
           provides: {}
       };
   }
+  // * here createApp
   function createAppAPI(render) {
       return function createApp() {
           const context = createAppContext();
@@ -5186,10 +5187,12 @@ var Vue = (function (exports) {
               },
               mount(rootComponent, rootContainer, rootProps) {
                   if (!isMounted) {
+                      // 创建Vnode
                       const vnode = createVNode(rootComponent, rootProps);
                       // store app context on the root VNode.
                       // this will be set on the root instance on initial mount.
                       vnode.appContext = context;
+                      // 渲染
                       render(vnode, rootContainer);
                       isMounted = true;
                       return vnode.component.renderProxy;
@@ -5751,6 +5754,7 @@ var Vue = (function (exports) {
               setRef(n2.ref, n1 && n1.ref, parentComponent, n2.component.renderProxy);
           }
       }
+      // 挂载组件
       function mountComponent(initialVNode, container, anchor, parentComponent, parentSuspense, isSVG) {
           const instance = (initialVNode.component = createComponentInstance(initialVNode, parentComponent));
           {
@@ -6851,8 +6855,9 @@ var Vue = (function (exports) {
           applyOptions(instance, mixins[i], true);
       }
   }
-
+  // * entry
   const emptyAppContext = createAppContext();
+  //
   function createComponentInstance(vnode, parent) {
       // inherit parent app context - or - if root, adopt from root vnode
       const appContext = (parent ? parent.appContext : vnode.appContext) || emptyAppContext;
@@ -6906,6 +6911,7 @@ var Vue = (function (exports) {
           rtc: null,
           ec: null,
           emit: (event, ...args) => {
+              // 实例emit的逻辑
               const props = instance.vnode.props || EMPTY_OBJ;
               const handler = props[`on${event}`] || props[`on${capitalize(event)}`];
               if (handler) {
@@ -7738,7 +7744,7 @@ var Vue = (function (exports) {
           return fn(event);
       };
   };
-
+  // 此处生成render和createApp
   const { render, createApp } = createRenderer({
       patchProp,
       ...nodeOps

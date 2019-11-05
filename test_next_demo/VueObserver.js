@@ -353,6 +353,7 @@ var VueObserver = (function (exports) {
 
   const targetMap = new WeakMap ();
   // WeakMaps that store {raw <-> observed} pairs.
+  // 关于使用WeakMap的问题，
   const rawToReactive = new WeakMap ();
   const reactiveToRaw = new WeakMap ();
   const rawToReadonly = new WeakMap ();
@@ -429,11 +430,14 @@ var VueObserver = (function (exports) {
       return target;
     }
     // target already has corresponding Proxy
+    // toProxy 为rawToReadonly 或者 rawToReactive
+    //
     let observed = toProxy.get (target);
     if (observed !== void 0) {
       return observed;
     }
     // target is already a Proxy
+    // toRaw readonlyToRaw 或者 reactiveToRaw
     if (toRaw.has (target)) {
       return target;
     }
@@ -444,7 +448,9 @@ var VueObserver = (function (exports) {
     const handlers = collectionTypes.has (target.constructor)
       ? collectionHandlers
       : baseHandlers;
+    // * here
     observed = new Proxy (target, handlers);
+    // 将observed存储到全局
     toProxy.set (target, observed);
     toRaw.set (observed, target);
     if (!targetMap.has (target)) {
@@ -478,6 +484,7 @@ var VueObserver = (function (exports) {
   function isEffect (fn) {
     return fn != null && fn[effectSymbol] === true;
   }
+  // * here v2 watcher
   function effect (fn, options = EMPTY_OBJ) {
     if (isEffect (fn)) {
       fn = fn.raw;
@@ -509,9 +516,11 @@ var VueObserver = (function (exports) {
     effect.onTrigger = options.onTrigger;
     effect.onStop = options.onStop;
     effect.computed = options.computed;
+    // here
     effect.deps = [];
     return effect;
   }
+  // 将会收集deps和和effect进行关联
   function run (effect, fn, args) {
     if (!effect.active) {
       return fn (...args);
@@ -519,6 +528,7 @@ var VueObserver = (function (exports) {
     if (!effectStack.includes (effect)) {
       cleanup (effect);
       try {
+        // 这里
         effectStack.push (effect);
         return fn (...args);
       } finally {
@@ -542,10 +552,12 @@ var VueObserver = (function (exports) {
   function resumeTracking () {
     shouldTrack = true;
   }
+  // * here
   function track (target, type, key) {
     if (!shouldTrack || effectStack.length === 0) {
       return;
     }
+    // effect 像不像v2版本中的Dep.target
     const effect = effectStack[effectStack.length - 1];
     if (type === 'iterate' /* ITERATE */) {
       key = ITERATE_KEY;
@@ -556,8 +568,10 @@ var VueObserver = (function (exports) {
     }
     let dep = depsMap.get (key);
     if (dep === void 0) {
+      // 存储target的key的依赖
       depsMap.set (key, (dep = new Set ()));
     }
+    // effect 像不像V2的watcher
     if (!dep.has (effect)) {
       dep.add (effect);
       effect.deps.push (dep);

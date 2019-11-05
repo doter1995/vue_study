@@ -16,13 +16,18 @@
 <script>
     const root = document.querySelector('#root')
     const btn = document.querySelector('#btn')
-    const data = {
-        name: '张三',
+    const ob = VueObserver.reactive({
+        name: {
+            first :"zhang",
+            end: "san"
+        },
         age: 10
-    }
-    const ob = VueObserver.reactive(data)
+    })
+
+    let cAge = VueObserver.computed(() => ob.age * 2)
     VueObserver.effect(() => {
-        root.innerHTML = `<h1>${ob.name}---${ob.age}---${data.age}</h1>`
+        debugger;
+        root.innerHTML = `<h1>${ob.name.first}---${ob.age}----${cAge.value}</h1>`
     })
     btn.onclick = function () {
         ob.age += 1
