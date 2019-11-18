@@ -9,7 +9,7 @@ function defineReactive(
   // 设置拿到getter，setter
   const getter = property && property.get;
   const setter = property && property.set;
-  val = obj[key]
+  let val = obj[key]
 
   // 重新定义defineProperty
   Object.defineProperty(obj, key, {
