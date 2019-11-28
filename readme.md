@@ -10,9 +10,9 @@
 * 再读源码
 
 ### VUE打包分析
-[build指令分析](./VueBuild/index.md)
+[build指令分析](VueBuild/index.md)
 
 ### VUE源码分析
-[Vue源码分析](./Vue/index.md)
+[Vue源码分析](Vue/index.md)
 
 ### VUE渲染器分析

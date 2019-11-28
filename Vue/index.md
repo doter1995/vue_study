@@ -23,10 +23,12 @@
 6. 初始化Injections，vue2.2.1版本中的provide/inject
 `initInjections(vm)` // 处理 injections是在data/props之前初始化
 7. 此处会将object中的props,method,data,computed,watch进行初始化。
+[初始化State](/Vue/initState.md)
 `initState(vm)`
 8. 初始化provide vue2.2.1版本中的provide/inject
 `initProvide(vm)` // resolve provide after data/props
 9. 调用created
 `callHook(vm, 'created')`
+10. 调用$mount()进行渲染
 
 

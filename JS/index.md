@@ -41,3 +41,13 @@ Object.create(a)
 
 [Proxy](https://www.jianshu.com/p/4a5eca0536c3)
 
+### String方法
+### 前后缀判断`startsWith` & `endsWith`
+```javascript
+"aaa".startsWith("1") //false
+"aaa".startsWith("a") // true
+
+"aaa".endsWith("1") //false
+"aaa".endsWith("a") // true
+
+```
